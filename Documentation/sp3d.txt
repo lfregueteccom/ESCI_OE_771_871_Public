@@ -1,0 +1,2540 @@
+The Extended Standard Product 3 Orbit Format (SP3-d)
+21 February 2016
+
+Steve Hilla
+National Geodetic Survey
+National Ocean Service, NOAA
+Silver Spring, MD 20910, USA
+
+INTRODUCTION
+The SP3-d format adds three extensions to the previous SP3-c format:
+the maximum number of satellites is increased from 85 to 999, there are now
+an unlimited number of comment records allowed in the header, and the
+maximum length of each comment record has been increased from 60 characters
+to 80 characters.
+The need for the first change, getting past the 85 satellite limit, was long
+anticipated but has been accelerated recently by work done for the MultiGNSS Experiment (MGEX), an effort that was undertaken within the
+International GNSS Service (IGS) to explore and promote the use of new
+navigation signals and methods (Montenbruck et al. 2013). One product being
+discussed by the IGS Multi-GNSS Working Group (MGWG) is a broadcast
+ephemeris containing most of the existing Global Navigation Satellite System
+(GNSS) and Satellite-Based Augmentation System (SBAS) satellites. The number
+of satellites to be included is already over 85. In addition to being
+offered as a RINEX Navigation Message File, it will also be made available
+as an SP3-d file for those that might prefer using the broadcast orbits in
+that format (Montenbruck, 2013).
+
+The second and third changes have also been considered previously. In the
+past, the various IGS Analysis Center Coordinators who oversee the creation
+of the IGS combined orbit products have complained about trying to
+adequately describe the combined orbits using only the four comment lines
+allowed in SP3-c. If a change is made to allow an unlimited number of
+comment lines, to increase the amount of comment space available, it also
+makes sense to go ahead and increase the length of each comment line from 60
+characters to 80 characters. Most of the ephemeris data records found after
+the header are already 80 characters wide, as allowed in SP3-c.
+Over the past several years there have been other suggestions/requests for
+additional features such as: 0.1-millimeter (or better) resolution in
+satellite coordinates, irregularly-spaced epochs for kinematic LEO orbits,
+use of both NAVSTAR and PRN ID numbers to uniquely identify each satellite,
+and the use of quaternions to represent satellite attitude. These features
+have been included in a proposed format called The ORBit EXchange (ORBEX)
+format (Hilla, 2010) which is based on a more flexible, expandable design
+similar to the SINEX format (an idea first proposed by Gerd Gendt). While
+there are many users who are looking forward to the added features in ORBEX,
+it is understandable that many of these same users are not looking forward
+to the work involved in jumping to a completely new format. There is still a
+lot of work to be done to pare down the current ORBEX Draft Version, and to
+decide how best to balance brevity versus modularity for ORBEX (i.e., is it
+better to combine several different types of metadata in one block to save
+space, or to separate the metadata into separate blocks even if this
+
+
+
+Example 1. An SP3-d file with 140 satellites and 5 comment lines.
+1 #dP2013 4 3 0 0 0.00000000
+96 ORBIT WGS84 BCT MGEX
+2 ## 1734 259200.00000000
+900.00000000 56385 0.0000000000000
+3 + 140
+G01G02G03G04G05G06G07G08G09G10G11G12G13G14G15G16G17
+4 +
+G18G19G20G21G22G23G24G25G26G27G28G29G30G31G32R01R02
+5 +
+R03R04R05R06R07R08R09R10R11R12R13R14R15R16R17R18R19
+6 +
+R20R21R22R23R24E01E02E03E04E05E06E07E08E09E10E11E12
+7 +
+E13E14E15E16E17E18E19E20E21E22E23E24E25E26E27E28E29
+8 +
+E30C01C02C03C04C05C06C07C08C09C10C11C12C13C14C15C16
+9 +
+C17C18C19C20C21C22C23C24C25C26C27C28C29C30C31C32C33
+10 +
+C34C35J01J02J03I01I02I03I04I05I06I07S20S24S27S28S29
+11 +
+S33S35S37S38 0 0 0 0 0 0 0 0 0 0 0 0 0
+12 ++
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+13 ++
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+14 ++
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+15 ++
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+16 ++
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+17 ++
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+18 ++
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+19 ++
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+20 ++
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+21 %c M cc GPS ccc cccc cccc cccc cccc ccccc ccccc ccccc ccccc
+22 %c cc cc ccc ccc cccc cccc cccc cccc ccccc ccccc ccccc ccccc
+23 %f 1.2500000 1.025000000 0.00000000000 0.000000000000000
+24 %f 0.0000000 0.000000000 0.00000000000 0.000000000000000
+25 %i
+0
+0
+0
+0
+0
+0
+0
+0
+0
+26 %i
+0
+0
+0
+0
+0
+0
+0
+0
+0
+27 /* Note: This is a simulated file, meant to illustrate what an SP3-d header
+28 /* might look like with more than 85 satellites. Source for GPS and SBAS satel29 /* lite positions: BRDM0930.13N. G=GPS,R=GLONASS,E=Galileo,C=BeiDou,J=QZSS,
+30 /* I=IRNSS,S=SBAS. For definitions of SBAS satellites, refer to the website:
+31 /* http://igs.org/mgex/status-SBAS
+32 * 2013 4 3 0 0 0.00000000
+33 PG01
+5783.206741 -18133.044484 -18510.756016
+12.734450
+PG02 -22412.401440 13712.162332
+528.367722
+425.364822
+PG03 10114.112309 -17446.189044 16665.051308
+189.049475
+PG04 -24002.325710
+4250.313148 -11163.577756
+179.333612
+PG05 -15087.153141
+8034.886396 20331.626539
+-390.251167
+PG06 13855.140409 -11053.269706 19768.346019
+289.556712
+.
+.
+.
+PS28
+5169.591020 41849.037979
+17.421140
+0.170452
+PS29 -32240.432088 27155.480094
+-12.156456
+0.101500
+PS33 -5555.490565 -41739.269117
+2093.250932
+-0.199099
+PS35 -28749.533445 -30836.454809
+-4.729472
+-0.008333
+PS37 -34534.904566 24164.610955
+29.812840
+0.299420
+PS38 -12548.655240 -40249.910397
+-3.521920
+-0.027787
+* 2013 4 3 0 15 0.00000000
+.
+.
+.
+* 2013 4 3 23 45 0.00000000
+PG01
+4340.761149 -17469.395805 -19521.652181
+13.021579
+PG02 -22187.015530 13877.264416
+2583.141886
+425.527461
+PG03
+9785.535610 -18824.396329 15333.698561
+189.465625
+PG04 -24642.374460
+4816.578416 -9365.337848
+180.261632
+PG05 -13667.233808
+8977.038381 20922.734874
+-390.371011
+PG06 13696.828033 -12657.020030 18869.219517
+288.240920
+.
+.
+.
+PS28
+5172.029472 41849.075534
+17.353884
+0.346319
+PS29 -32238.862503 27158.965634
+-13.223188
+0.179982
+PS33 -5561.856798 -41736.409969
+2123.557039
+0.009913
+PS35 -28751.361488 -30835.144592
+-6.745702
+-0.006819
+PS37 -34533.867549 24170.548454
+28.300343
+-0.223601
+PS38 -12549.851291 -40249.647004
+-4.471664
+-0.003125
+EOF
+
+Example 2. A GPS-only SP3-d file with all record types (P, EP, V, EV).
+
+
+1 #dV2001 8 8 0 0 0.00000000
+192 ORBIT IGS97 HLM MGEX
+2 ## 1126 259200.00000000
+900.00000000 52129 0.0000000000000
+3 +
+26
+G01G02G03G04G05G06G07G08G09G10G11G13G14G17G18G20G21
+4 +
+G23G24G25G26G27G28G29G30G31 0 0 0 0 0 0 0 0
+5 +
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+6 +
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+7 +
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+8 ++
+7 8 7 8 6 7 7 7 7 7 7 7 7 8 8 7 9
+9 ++
+9 8 6 8 7 7 6 7 7 0 0 0 0 0 0 0 0
+10 ++
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+11 ++
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+12 ++
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+13 %c G cc GPS ccc cccc cccc cccc cccc ccccc ccccc ccccc ccccc
+14 %c cc cc ccc ccc cccc cccc cccc cccc ccccc ccccc ccccc ccccc
+15 %f 1.2500000 1.025000000 0.00000000000 0.000000000000000
+16 %f 0.0000000 0.000000000 0.00000000000 0.000000000000000
+17 %i
+0
+0
+0
+0
+0
+0
+0
+0
+0
+18 %i
+0
+0
+0
+0
+0
+0
+0
+0
+0
+19 /* AN EXAMPLE ULTRA RAPID ORBIT, GPS ONLY.
+20 /* NOTE THE “PREDICTED DATA” FLAGS FOR THE LAST EPOCH (IN COLUMNS 76 and 80).
+21 /* CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+22 /* CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+23 * 2001 8 8 0 0 0.00000000
+24 PG01 -11044.805800 -10475.672350 21929.418200
+189.163300 18 18 18 219
+25 EP
+55
+55
+55
+222 1234567 -1234567 5999999
+-30
+21 -1230000
+26 VG01 20298.880364 -18462.044804
+1381.387685
+-4.534317 14 14 14 191
+27 EV
+22
+22
+22
+111 1234567 1234567 1234567 1234567 1234567 1234567
+PG02 -12593.593500 10170.327650 -20354.534400
+-55.976000 18 18 18 219
+M
+EP
+55
+55
+55
+222 1234567 -1234567 5999999
+-30
+21 -1230000
+VG02 -9481.923808 -25832.652567 -7277.160056
+8.801258 14 14 14 191
+EV
+22
+22
+22
+111 1234567 1234567 1234567 1234567 1234567 1234567
+PG03
+9335.606450 -21952.990750 -11624.350150
+54.756700 18 18 18 219
+EP
+55
+55
+55
+222 1234567 -1234567 5999999
+-30
+21 -1230000
+VG03 12497.392894 -8482.260298 26230.348459
+5.620682 14 14 14 191
+EV
+22
+22
+22
+111 1234567 1234567 1234567 1234567 1234567 1234567
+PG04 -16148.976900
+8606.630600 19407.845050
+617.997800 18 18 18 219
+EP
+55
+55
+55
+222 1234567 -1234567 5999999
+-30
+21 -1230000
+VG04 -22859.768469 -8524.538983 -15063.229095
+-3.292980 14 14 14 191
+EV
+22
+22
+22
+111 1234567 1234567 1234567 1234567 1234567 1234567
+PG05 13454.631450 20956.333700
+9376.994100
+308.956400 18 18 18 219
+EP
+55
+55
+55
+222 1234567 -1234567 5999999
+-30
+21 -1230000
+VG05
+392.255680 12367.086937 -27955.768747
+-13.600595 14 14 14 191
+EV
+22
+22
+22
+111 1234567 1234567 1234567 1234567 1234567 1234567
+.
+.
+.
+* 2001 8 9 23 45 0.00000000
+PG01 -11044.805800 -10475.672350 21929.418200
+189.163300 18 18 18 219 P
+P
+EP
+55
+55
+55
+222 1234567 -1234567 5999999
+-30
+21 -1230000
+VG01 20298.880364 -18462.044804
+1381.387685
+-4.534317 14 14 14 191
+EV
+22
+22
+22
+111 1234567 1234567 1234567 1234567 1234567 1234567
+PG02 -12593.593500 10170.327650 -20354.534400
+-55.976000 18 18 18 219 P
+P
+EP
+55
+55
+55
+222 1234567 -1234567 5999999
+-30
+21 -1230000
+VG02 -9481.923808 -25832.652567 -7277.160056
+8.801258 14 14 14 191
+EV
+22
+22
+22
+111 1234567 1234567 1234567 1234567 1234567 1234567
+.
+.
+.
+PG30 -23592.378250
+1395.049800 -12524.037100
+461.972900 18 18 18 219 P
+P
+EP
+55
+55
+55
+222 1234567 -1234567 5999999
+-30
+21 -1230000
+VG30 -13996.847785 -6945.665482 25908.199568
+0.364488 14 14 14 191
+EV
+22
+22
+22
+111 1234567 1234567 1234567 1234567 1234567 1234567
+PG31 17353.533200 15151.105700 -13851.534050
+-1.841700 18 18 18 219 P
+P
+EP
+55
+55
+55
+222 1234567 -1234567 5999999
+-30
+21 -1230000
+VG31 -16984.306646 -2424.913336 -23969.277677
+-14.371692 14 14 14 191
+EV
+22
+22
+22
+111 1234567 1234567 1234567 1234567 1234567 1234567
+EOF
+
+results in a slightly more verbose file). In the meantime, the MGWG within
+the IGS needs SP3-d now to get past the 85 satellite limit.
+One final note is needed regarding multi-constellation orbit files. Just
+because one can put GNSS satellites from multiple constellations into the
+same SP3-c or SP3-d file, doesn’t mean it is always a good idea. For
+example, non-trivial inter-system timing and orbital reference frame
+differences currently preclude the IGS from making a rigorous GPS+GLONASS
+product where the two constellations are truly in the same Time System and
+in the same Reference Frame. For lower accuracy files (like the MGWG
+broadcast ephemeris SP3 file mentioned above) these differences in Time
+System and Reference Frame might be ignored, as long as everyone understands
+the limitations of such a file.
+IMPLEMENTATION CONSIDERATIONS
+Each of the record types found in an SP3 header has a unique set of
+characters in columns one and two. This makes it easy to read through the
+header, even when the number of lines in the header is dependent on the
+number of satellites and the number of comment records. For example, for any
+SP3-d file, the first two records (beginning with “#d” and “##”) will always
+be present. The third through seventh lines will always be present as well.
+For backwards compatibility, every SP3-d file must always have at least:
+five satellite ID records (beginning with “+ “), five orbit accuracy records
+(beginning with “++”), and four comments records (beginning with “/*”);
+even when the number of satellites is less than 85 (see Example 2). If there
+are more than 85 satellites, there will be more than five “+ “ records and
+these records can be read in until the first “++” record is encountered.
+There are 17 satellite IDs on each line, and this fact can be used to
+compute the indices for loading the satellite IDs into an array if required.
+The last “+ “ line may contain zeroes if the number of satellites (given on
+line three) is not an even multiple of 17. As a check, the number of
+satellite IDs read in should match the number of satellites given on line
+three.
+
+
+There should always be the same number of “++” records as there are
+“+ “ records, since both record types are dependent on the number of
+satellites. Again, this fact can be used to check the number of “++”
+records, which can be read in until the first “%c” record is encountered.
+After the “++” records, there will always be exactly two “%c”, two “%f”, and
+two “%i” records. Columns 10-12 in the first %c record define what time
+system is used for the date/times in the ephemeris. If estimates of the
+standard deviations for the satellite coordinates and satellite clock
+offsets are given, then the first “%f” line will hold the floating point
+base numbers (e.g., 1.25 for the coordinates, and 1.025 for the clock
+offsets), see Example 2. See also the text regarding line twenty-three in
+the section below entitled “DETAILED DISCUSSION OF THE SP3-d FORMAT”.
+After the second “%i” record is read in, the comment records will
+follow. These comments can be read in until the first “* “ record is
+encountered (i.e., until the first Epoch Header Record is found). This will
+mark the end of the header, and the beginning of the actual ephemeris part
+of the file. Although the number of comment records is theoretically
+unlimited, users are asked to practice constraint. It was considered to
+limit the number of comment lines to 40 or 400. However, any such limit
+would seem somewhat arbitrary. The beauty of the SP3 format is really its
+compactness, and it would seem to go against the spirit of SP3 to see a file
+with tens of thousands of comment lines and only 3,200 lines of actual data.
+Please make your comments brief. One can always include a URL or some other
+reference that points to other files with additional metadata. This is
+
+especially important for any large number of orbit files that will need to
+be archived.
+HISTORY OF THE SP3 FORMAT
+For the history of the SP3 format, originally developed by Benjamin W.
+Remondi, please refer to Appendices A and B at the end of this document.
+COLUMN-BY-COLUMN DESCRIPTION OF THE SP3-d FORMAT
+Standard Product #3 ASCII SP3 Format Version "d" (see Example 1.)
+Columns
+-----------------
+
+Description
+-----------------
+
+Example
+-----------------
+
+Format
+---------
+
+Version Symbol
+Pos or Vel Flag
+Year Start
+Unused
+Month Start
+Unused
+Day of Month St
+Unused
+Hour Start
+Unused
+Minute Start
+Unused
+Second Start
+Unused
+Number of Epochs
+Unused
+Data Used
+Unused
+Coordinate Sys
+Unused
+Orbit Type
+Unused
+Agency
+
+#d
+P or V
+2013
+_
+_4
+_
+_3
+_
+_0
+_
+_0
+_
+_0.00000000
+_
+_____96
+_
+ORBIT
+_
+WGS84
+_
+BCT
+_
+MGEX
+
+A2
+A1
+I4
+blank
+I2
+blank
+I2
+blank
+I2
+blank
+I2
+blank
+F11.8
+blank
+I7
+blank
+A5
+blank
+A5
+blank
+A3
+blank
+A4
+
+Symbols
+Unused
+GPS Week
+Unused
+Seconds of Week
+Unused
+Epoch Interval
+Unused
+Mod Jul Day St
+Unused
+Fractional Day
+
+##
+_
+1734
+_
+259200.00000000
+_
+__900.00000000
+_
+56385
+_
+0.0000000000000
+
+A2
+blank
+I4
+blank
+F15.8
+blank
+F14.8
+blank
+I5
+blank
+F15.13
+
+Symbols
+Unused
+
++_
+_
+
+A2
+blank
+
+SP3 First Line
+Columns 1-2
+Column 3
+Columns 4-7
+Column 8
+Columns 9-10
+Column 11
+Columns 12-13
+Column 14
+Columns 15-16
+Column 17
+Columns 18-19
+Column 20
+Columns 21-31
+Column 32
+Columns 33-39
+Column 40
+Columns 41-45
+Column 46
+Columns 47-51
+Column 52
+Columns 53-55
+Column 56
+Columns 57-60
+SP3 Line Two
+
+
+
+Columns 1-
+Column 3
+Columns 4-7
+Column 8
+Columns 9-23
+Column 24
+Columns 25-38
+Column 39
+Columns 40-44
+Column 45
+Columns 46-60
+SP3 Line Three
+Columns 1-2
+Column
+3
+
+Columns 4-6
+Column 7-9
+Columns 10-12
+Column 13-15
+*
+*
+*
+Columns 58-60
+
+Number of Sats
+Unused
+Sat #1 Id
+Sat #2 Id
+
+140
+___
+G01
+G02
+
+I3
+3 blanks
+A1,I2.2
+A1,I2.2
+
+Sat #17 Id
+
+G17
+
+A1,I2.2
+
+Symbols
+Unused
+Sat #18 Id
+Sat #19 Id
+
++_
+_______
+G18
+G19
+
+A2
+7 blanks
+A1,I2.2
+A1,I2.2
+
+Sat #34 Id
+
+R02
+
+A1,I2.2
+
+Symbols
+Unused
+Sat #35 Id
+Sat #36 Id
+
++_
+_______
+R03
+R04
+
+A2
+7 blanks
+A1,I2.2
+A1,I2.2
+
+Sat #51 Id
+
+R19
+
+A1,I2.2
+
+Symbols
+Unused
+Sat #52 Id
+Sat #53 Id
+
++_
+_______
+R20
+R21
+
+A2
+7 blanks
+A1,I2.2
+A1,I2.2
+
+Sat #68 Id
+
+E12
+
+A1,I2.2
+
+Symbols
+Unused
+Sat #69 Id
+Sat #70 Id
+
++_
+_______
+E13
+E14
+
+A2
+7 blanks
+A1,I2.2
+A1,I2.2
+
+Sat #85 Id
+
+E29
+
+A1,I2.2
+
+SP3 Line Four
+Columns 1-2
+Columns 3-9
+Columns 10-12
+Columns 13-15
+*
+*
+*
+Columns 58-60
+SP3 Line Five
+Columns 1-2
+Columns 3-9
+Columns 10-12
+Columns 13-15
+*
+*
+*
+Columns 58-60
+SP3 Line Six
+Columns 1-2
+Columns 3-9
+Columns 10-12
+Columns 13-15
+*
+*
+*
+Columns 58-60
+SP3 Line Seven
+Columns 1-2
+Columns 3-9
+Columns 10-12
+Columns 13-15
+*
+*
+*
+Columns 58-60
+
+---------------------------------------------------------------------
+
+
+
+Note:
+
+If there are more than 85 satellites, there will be more than
+just the required five satellite ID (“+ “) records.
+
+SP3 Line Eight
+Columns 1-2
+Columns 3-9
+Columns 10-12
+Columns 13-15
+*
+*
+*
+Columns 58-60
+
+Symbols
+Unused
+Sat #86 Id
+Sat #87 Id
+
++_
+_______
+E30
+C01
+
+A2
+7 blanks
+A1,I2.2
+A1,I2.2
+
+Sat #102 Id
+
+C16
+
+A1,I2.2
+
+Symbols
+Unused
+Sat #103 Id
+Sat #104 Id
+
++_
+_______
+C17
+C18
+
+A2
+7 blanks
+A1,I2.2
+A1,I2.2
+
+Sat #119 Id
+
+C33
+
+A1,I2.2
+
+Symbols
+Unused
+Sat #120 Id
+Sat #121 Id
+
++_
+_______
+C34
+C35
+
+A2
+7 blanks
+A1,I2.2
+A1,I2.2
+
+Sat #136 Id
+
+S29
+
+A1,I2.2
+
+Symbols
+Unused
+Sat #137 Id
+Sat #138 Id
+
++_
+_______
+S33
+S35
+
+A2
+7 blanks
+A1,I2.2
+A1,I2.2
+
+Sat #153 Id
+
+__0
+
+A1,I2.2
+
+SP3 Line Nine
+Columns 1-2
+Columns 3-9
+Columns 10-12
+Columns 13-15
+*
+*
+*
+Columns 58-60
+SP3 Line Ten
+Columns 1-2
+Columns 3-9
+Columns 10-12
+Columns 13-15
+*
+*
+*
+Columns 58-60
+SP3 Line Eleven
+Columns 1-2
+Columns 3-9
+Columns 10-12
+Columns 13-15
+*
+*
+*
+Columns 58-60
+
+---------------------------------------------------------------------
+
+
+SP3 Line Twelve
+Columns 1-2
+Columns 3-9
+Columns 10-12
+Columns 13-15
+*
+*
+*
+Columns 58-60
+
+Symbols
+Unused
+Sat #1 Accuracy
+Sat #2 Accuracy
+
+++
+_______
+__0
+__0
+
+A2
+7 blanks
+I3
+I3
+
+Sat #17 Accuracy
+
+__0
+
+I3
+
+SP3 Line Thirteen
+Columns 1-2
+Columns 3-9
+Columns 10-12
+Columns 13-15
+*
+*
+*
+Columns 58-60
+
+Symbols
+Unused
+Sat #18 Accuracy
+Sat #19 Accuracy
+
+++
+_______
+__0
+__0
+
+A2
+7 blanks
+I3
+I3
+
+Sat #34 Accuracy
+
+__0
+
+I3
+
+Symbols
+Unused
+Sat #35 Accuracy
+Sat #36 Accuracy
+
+++
+_______
+__0
+__0
+
+A2
+7 blanks
+I3
+I3
+
+Sat #51 Accuracy
+
+__0
+
+I3
+
+Symbols
+Unused
+Sat #52 Accuracy
+Sat #53 Accuracy
+
+++
+_______
+__0
+__0
+
+A2
+7 blanks
+I3
+I3
+
+Sat #68 Accuracy
+
+__0
+
+I3
+
+Symbols
+Unused
+Sat #69 Accuracy
+Sat #70 Accuracy
+
+++
+_______
+__0
+__0
+
+A2
+7 blanks
+I3
+I3
+
+Sat #85 Accuracy
+
+__0
+
+I3
+
+SP3 Line Fourteen
+Columns 1-2
+Columns 3-9
+Columns 10-12
+Columns 13-15
+*
+*
+*
+Columns 58-60
+SP3 Line Fifteen
+Columns 1-2
+Columns 3-9
+Columns 10-12
+Columns 13-15
+*
+*
+*
+Columns 58-60
+SP3 Line Sixteen
+Columns 1-2
+Columns 3-9
+Columns 10-12
+Columns 13-15
+*
+*
+*
+Columns 58-60
+
+------------------------------------------------------------------Note: If there are more than 85 satellites, there will be more than
+just the required five orbit accuracy (“++“) records.
+
+
+SP3 Line Seventeen
+Columns 1-2
+Columns 3-9
+Columns 10-12
+Columns 13-15
+*
+*
+*
+Columns 58-60
+
+Symbols
+Unused
+Sat #86 Accuracy
+Sat #87 Accuracy
+
+++
+_______
+__0
+__0
+
+A2
+7 blanks
+I3
+I3
+
+Sat #102 Accuracy
+
+__0
+
+I3
+
+SP3 Line Eighteen
+Columns 1-2
+Columns 3-9
+Columns 10-12
+Columns 13-15
+*
+*
+*
+Columns 58-60
+
+Symbols
+Unused
+Sat #103 Accuracy
+Sat #104 Accuracy
+
+++
+_______
+__0
+__0
+
+A2
+7 blanks
+I3
+I3
+
+Sat #119 Accuracy
+
+__0
+
+I3
+
+Symbols
+Unused
+Sat #120 Accuracy
+Sat #121 Accuracy
+
+++
+_______
+__0
+__0
+
+A2
+7 blanks
+I3
+I3
+
+Sat #136 Accuracy
+
+__0
+
+I3
+
+Symbols
+Unused
+Sat #137 Accuracy
+Sat #138 Accuracy
+
+++
+_______
+__0
+__0
+
+A2
+7 blanks
+I3
+I3
+
+Sat #153 Accuracy
+
+__0
+
+I3
+
+SP3 Line Nineteen
+Columns 1-2
+Columns 3-9
+Columns 10-12
+Columns 13-15
+*
+*
+*
+Columns 58-60
+SP3 Line Twenty
+Columns 1-2
+Columns 3-9
+Columns 10-12
+Columns 13-15
+*
+*
+*
+Columns 58-60
+
+-------------------------------------------------------------------
+
+
+
+SP3 Line Twenty one
+Columns 1-2
+Column 3
+Columns 4-5
+Column 6
+Columns 7-8
+Column 9
+Columns 10-12
+Column 13
+Columns 14-16
+Column 17
+Columns 18-21
+Column 22
+Columns 23-26
+Column 27
+Columns 28-31
+Column 32
+Columns 33-36
+Column 37
+Columns 38-42
+Column 43
+Columns 44-48
+Column 49
+Columns 50-54
+Column 55
+
+Symbols
+Unused
+File Type
+Unused
+2 characters
+Unused
+Time System
+Unused
+3 characters
+Unused
+4 characters
+Unused
+4 characters
+Unused
+4 characters
+Unused
+4 characters
+Unused
+5 characters
+Unused
+5 characters
+Unused
+5 characters
+Unused
+
+%c
+_
+M_
+_
+cc
+_
+GPS
+_
+ccc
+_
+cccc
+_
+cccc
+_
+cccc
+_
+cccc
+_
+ccccc
+_
+ccccc
+_
+ccccc
+_
+
+A2
+blank
+A2
+blank
+A2
+blank
+A3
+blank
+A3
+blank
+A4
+blank
+A4
+blank
+A4
+blank
+A4
+blank
+A5
+blank
+A5
+blank
+A5
+blank
+
+Columns 56-60
+
+5 characters
+
+ccccc
+
+A5
+
+Symbols
+Unused
+2 characters
+Unused
+2 characters
+Unused
+3 characters
+Unused
+3 characters
+Unused
+4 characters
+Unused
+4 characters
+Unused
+4 characters
+Unused
+4 characters
+Unused
+5 characters
+Unused
+5 characters
+Unused
+5 characters
+Unused
+5 characters
+
+%c
+_
+cc
+_
+cc
+_
+ccc
+_
+ccc
+_
+cccc
+_
+cccc
+_
+cccc
+_
+cccc
+_
+ccccc
+_
+ccccc
+_
+ccccc
+_
+ccccc
+
+A2
+blank
+A2
+blank
+A2
+blank
+A3
+blank
+A3
+blank
+A4
+blank
+A4
+blank
+A4
+blank
+A4
+blank
+A5
+blank
+A5
+blank
+A5
+blank
+A5
+
+SP3 Line Twenty two
+Columns 1-2
+Column 3
+Columns 4-5
+Column 6
+Columns 7-8
+Column 9
+Columns 10-12
+Column 13
+Columns 14-16
+Column 17
+Columns 18-21
+Column 22
+Columns 23-26
+Column 27
+Columns 28-31
+Column 32
+Columns 33-36
+Column 37
+Columns 38-42
+Column 43
+Columns 44-48
+Column 49
+Columns 50-54
+Column 55
+Columns 56-60
+
+SP3 Line Twenty three
+Columns 1-2
+Column 3
+Columns 4-13
+Column 14
+Columns 15-26
+Column 27
+Columns 28-41
+Column 42
+Columns 43-60
+
+Symbols
+%f
+Unused
+_
+Base for Pos/Vel
+_1.2500000
+(mm or 10**-4 mm/sec)
+Unused
+_
+Base for Clk/Rate _1.025000000
+(psec or 10**-4 psec/sec)
+Unused
+_
+14-column float
+_0.00000000000
+Unused
+_
+18-column float
+_0.000000000000000
+
+A2
+blank
+F10.7
+blank
+F12.9
+blank
+F14.11
+blank
+F18.15
+
+SP3 Line Twenty four
+
+
+Columns 1-2
+Column 3
+Columns 4-13
+Column 14
+Columns 15-26
+Column 27
+Columns 28-41
+Column 42
+Columns 43-60
+
+Symbols
+Unused
+10-column float
+Unused
+12-column float
+Unused
+14-column float
+Unused
+18-column float
+
+%f
+_
+_0.0000000
+_
+_0.000000000
+_
+_0.00000000000
+_
+_0.000000000000000
+
+A2
+blank
+F10.7
+blank
+F12.9
+blank
+F14.11
+blank
+F18.15
+
+%i
+
+A2
+
+SP3 Lines Twenty five and Twenty six
+Columns 1-2
+
+Symbols
+
+Column 3
+Columns 4-7
+Column 8
+Columns 9-12
+Column 13
+Columns 14-17
+Column 18
+Columns 19-22
+Column 23
+Columns 24-29
+Column 30
+Columns 31-36
+Column 37
+Columns 38-43
+Column 44
+Columns 45-50
+Column 51
+Columns 52-60
+
+Unused
+4-column int
+Unused
+4-column int
+Unused
+4-column int
+Unused
+4-column int
+Unused
+6-column int
+Unused
+6-column int
+Unused
+6-column int
+Unused
+6-column int
+Unused
+9-column int
+
+_
+___0
+_
+___0
+_
+___0
+_
+___0
+_
+_____0
+_
+_____0
+_
+_____0
+_
+_____0
+_
+________0
+
+blank
+I4
+blank
+I4
+blank
+I4
+blank
+I4
+blank
+I6
+blank
+I6
+blank
+I6
+blank
+I6
+blank
+I9
+
+SP3 Lines Twenty seven to Thirty one (5 comment lines in example 1)
+Columns 1-2
+Column 3
+Columns 4-80
+
+Symbols
+Unused
+Comment
+
+/*
+_
+CC...CC
+
+A2
+blank
+A77
+
+SP3 Line Thirty two (The Epoch Header Record)
+Columns 1-2
+Column 3
+Columns 4-7
+Column 8
+Columns 9-10
+Column 11
+Columns 12-13
+Column 14
+Columns 15-16
+Column 17
+Columns 18-19
+Column 20
+Columns 21-31
+
+Symbols
+Unused
+Year Start
+Unused
+Month Start
+Unused
+Day of Month St
+Unused
+Hour Start
+Unused
+Minute Start
+Unused
+Second Start
+
+*_
+_
+2013
+_
+_4
+_
+_3
+_
+_0
+_
+_0
+_
+_0.00000000
+
+A2
+blank
+I4
+blank
+I2
+blank
+I2
+blank
+I2
+blank
+I2
+blank
+F11.8
+
+
+
+SP3 Line Thirty three (The Position and Clock Record)
+(See example 1)
+Column 1
+Columns 2-4
+Columns 5-18
+Columns 19-32
+Columns 33-46
+Columns 47-60
+Column 61
+Columns 62-63
+Column 64
+Columns 65-66
+Column 67
+Columns 68-69
+Column 70
+Columns 71-73
+Column 74
+Column 75
+Column 76
+
+Symbol
+P
+Vehicle Id.
+G01
+x-coordinate(km)
+___5783.206741
+y-coordinate(km)
+_-18133.044484
+z-coordinate(km)
+_-18510.756016
+clock (microsec)
+_____12.734450
+Unused
+_
+x-sdev (b**n mm)
+__
+Unused
+_
+y-sdev (b**n mm)
+__
+Unused
+_
+z-sdev (b**n mm)
+__
+Unused
+_
+c-sdev (b**n psec) ___
+Unused
+_
+E=Clock Event Flag _
+P=Clock Pred. Flag _
+
+A1
+A1,I2.2
+F14.6
+F14.6
+F14.6
+F14.6
+blank
+I2
+blank
+I2
+blank
+I2
+blank
+I3
+blank
+A1
+A1
+
+Columns 77-78
+Column 79
+Column 80
+
+Unused
+__
+M=Maneuver Flag
+_
+P=Orbit Pred. Flag _
+
+2 blanks
+A1
+A1
+
+If the user wishes to include correlation information between the position
+components and the clock correction, then an optional Position and Clock
+Correlation Record can be added after each Position and Clock Record. This
+record gives the standard deviations for X, Y, Z, and clock correction with
+greater resolution than the approximate values given in the Position and
+Clock Record in columns 61 through 80.
+SP3 Line Twenty five in Example 2. (The Position and Clock Correlation
+Record)
+Columns 1-2
+Columns 3-4
+Columns 5-8
+Column 9
+Columns 10-13
+Column 14
+Columns 15-18
+Column 19
+Columns 20-26
+Column 27
+Columns 28-35
+Column 36
+Columns 37-44
+Column 45
+Columns 46-53
+Column 54
+Columns 55-62
+Column 63
+Columns 64-71
+Column 72
+Columns 73-80
+
+Symbols
+Unused
+x-sdev (mm)
+Unused
+y-sdev (mm)
+Unused
+z-sdev (mm)
+Unused
+clk-sdev (psec)
+Unused
+xy-correlation
+Unused
+xz-correlation
+Unused
+xc-correlation
+Unused
+yz-correlation
+Unused
+yc-correlation
+Unused
+zc-correlation
+
+EP
+__
+__55
+_
+__55
+_
+__55
+_
+____222
+_
+_1234567
+_
+-1234567
+_
+_5999999
+_
+_____-30
+_
+______21
+_
+-1230000
+
+A2
+2 blanks
+I4
+blank
+I4
+blank
+I4
+blank
+I7
+blank
+I8
+blank
+I8
+blank
+I8
+blank
+I8
+blank
+I8
+blank
+I8
+
+The user can choose to include the optional Velocity and Clock Rate-ofChange Record, V, after each Position and Clock Record. The clock rate-ofchange units are 10**-4 microseconds/second for cols. 47-60 below.
+SP3 Line Twenty six in Example 2.
+Column 1
+Columns 2-4
+Columns 5-18
+Columns 19-32
+Columns 33-46
+Columns 47-60
+Column 61
+Columns 62-63
+
+
+Column 64
+Columns 65-66
+Column 67
+Columns 68-69
+Column
+
+70
+
+Symbol
+V
+Vehicle Id.
+G01
+x-velocity(dm/s)
+__20298.880364
+y-velocity(dm/s)
+_-18462.044804
+z-velocity(dm/s)
+___1381.387685
+clock rate-chg
+_____-4.534317
+Unused
+_
+xvel-sdev
+14
+(b**n 10**-4 mm/sec)
+Unused
+_
+yvel-sdev
+14
+(b**n 10**-4 mm/sec)
+Unused
+_
+zvel-sdev
+14
+(b**n 10**-4 mm/sec)
+Unused
+_
+
+A1
+A1,I2.2
+F14.6
+F14.6
+F14.6
+F14.6
+blank
+I2
+blank
+I2
+blank
+I2
+blank
+
+Columns 71-73
+Columns 74-80
+
+clkrate-sdev
+191
+(b**n 10**-4 psec/sec)
+Unused
+_______
+
+I3
+7 blanks
+
+If the user wishes to include correlation information between the velocity
+components and the clock correction rate-of-change, then a separate Velocity
+and Clock Rate-of-Change Correlation Record can be added after each Velocity
+and Clock Rate-of-Change Record. This record gives the standard deviations
+for the X-, Y-, Z-velocities and the clock correction rate-of-change with
+greater resolution than the approximate values given in the Velocity and
+Clock Rate-of-Change Record.
+SP3 Line Twenty seven in Example 2. - The Velocity and Clock Rate-ofChange Correlation Record.
+Columns 1-2
+Columns 3-4
+Columns 5-8
+Column 9
+Columns 10-13
+Column 14
+Columns 15-18
+Column 19
+Columns 20-26
+Column 27
+Columns 28-35
+Column 36
+Columns 37-44
+Column 45
+Columns 46-53
+Column 54
+Columns 55-62
+Column 63
+Columns 64-71
+Column 72
+Columns 73-80
+
+Symbols
+Unused
+xvel-sdev
+(10**-4 mm/sec)
+Unused
+yvel-sdev
+(10**-4 mm/sec)
+Unused
+zvel-sdev
+(10**-4 mm/sec)
+Unused
+clkrate-sdev
+(10**-4 psec/sec)
+Unused
+xy-correlation
+Unused
+xz-correlation
+Unused
+xc-correlation
+Unused
+yz-correlation
+Unused
+yc-correlation
+Unused
+zc-correlation
+
+EV
+__
+__22
+
+A2
+2 blanks
+I4
+
+_
+__22
+
+blank
+I4
+
+_
+__22
+
+blank
+I4
+
+_
+____111
+
+blank
+I7
+
+_
+_1234567
+_
+_1234567
+_
+_1234567
+_
+_1234567
+_
+_1234567
+_
+_1234567
+
+blank
+I8
+blank
+I8
+blank
+I8
+blank
+I8
+blank
+I8
+blank
+I8
+
+SP3 “Last” Line (The End-of-File marker)
+Columns 1-3
+
+End of File
+
+EOF
+
+A3
+
+If no Velocity and Clock Rate-of-Change Records or Correlation Records are
+present, and the number of satellites (NSAT) is less than or equal to 85,
+and the number of comment lines is equal to the minimally required 4, and
+the number of epochs = NEPCS, then the last line number in the file can be
+computed as:
+
+
+Last Line number = 22+(NEPCS*(NSAT+1))+1 .
+If no Velocity and Clock Rate-of-Change Records or Correlation Records are
+
+present, and the number of satellites is greater than 85, and the number of
+comment lines (NCOMM) is greater than the required 4, then the last line #
+in the file can be computed (using the FORTRAN “INT” function) as follows:
+Last Line number = 8+2*(INT(NSAT/17.01)+1)+NCOMM+(NEPCS*(NSAT+1))+1 .
+
+DETAILED DISCUSSION OF THE SP3-d FORMAT
+Unless otherwise noted, the line numbers used below refer to Example 1.
+On line one, character two is the format version identification character.
+This fourth SP3 version has been designated version 'd'. Subsequent versions
+will use lower case letters in alphabetical order. The first line comprises
+the Gregorian date and time of day of the first epoch of the orbit, the
+number of epochs in the ephemeris file (up to 9,999,999), the data used
+descriptor, the coordinate system used descriptor, the orbit type
+descriptor, and the agency descriptor. The data used descriptor was
+included for ease in distinguishing between multiple orbital solutions from
+a single organization. This will have primary use for the agency generating
+the orbit. A possible convention is given below; this is not considered
+final and suggestions are welcome.
+u
+du
+s
+ds
+d
+dd
+U
+dU
+S
+dS
+D
+dD
++
+
+-- undifferenced carrier phase
+-- change in u with time
+-- 2-receiver/1-satellite carrier phase
+-- change on s with time
+-- 2-receiver/2-satellite carrier phase
+-- change in d with time
+-- undifferenced code phase
+-- change in U with time
+-- 2-receiver/1-satellite code phase
+-- change in S with time
+-- 2-receiver/2-satellite code phase
+-- change in D with time
+-- type separator
+
+Combinations such as "__u+U" seem reasonable. If the measurements used
+were complex combinations of standard types, then one could use "mixed"
+where mixed could be explained on the comment lines. In example 1, the file
+is a combination of orbits from several agencies and so the data used is
+designated as 'ORBIT'.
+
+
+The Coordinate System or Reference Frame in which the satellite
+positions and velocities are given is described by a five character code. In
+the early years of the IGS, codes such as IER91, IER92, IER93, ITR94, etc.
+were used. More recent years have used IGS05, IGS08, and IGb08 – which are
+IGS realizations of the ITRF2005 & ITRF2008 reference frames, respectively.
+The reference frame “WGS84” is used in Example 1 to stress the fact that the
+satellite positions are derived from a set of broadcast ephemerides from the
+various GNSS constellations. In this case, the reference frames used by the
+GNSS may be different at the centimeter level, but the accuracy of the orbit
+information itself is at the meter level -- and at that level the frames can
+be considered coincident.
+Orbit type is described by a three character descriptor. At this time
+only four have been defined: FIT (fitted), EXT (extrapolated or predicted),
+BCT (broadcast), and HLM (fitted after applying a Helmert transformation).
+Naturally, others are possible. The computing agency descriptor allows four
+characters (e.g. _NGS, _IGS, MGEX, etc.).
+The second line has: the GPS week; the seconds of the GPS Week elapsed
+at the start of the orbit (0.0 <= seconds of week < 604800.0); the epoch
+interval (0.0 < epoch interval < 100000.0) in seconds; the modified Julian
+
+Day Start (where 44244 represents GPS zero time -- January 6, 1980); and
+fractional part of the day (0.0 <= fractional < 1.0) at the start of the
+orbit.
+The third line to the eleventh line (in Example 1) indicates the number
+of satellites followed by their respective identifiers. For the SP3-d
+format, the maximum number of satellites has been increased from 85 to 999.
+Hence there can now actually be more than five “+ “ lines if there are more
+than 85 satellites. For the sake of backwards compatibility, if an SP3-d
+file has less than 85 satellites, it must still have five satellite ID
+(“+ “) lines. The identifiers must use consecutive slots and continue on as
+many lines as required. The value 0 should only appear after all the
+identifiers are listed (see Example 1). Satellite identifiers may be listed
+in any order. However, for ease in reviewing satellites included in the
+orbit file it is recommended that numerical order be used. Each identifier
+will consist of a letter followed by a 2-digit integer between 01 and 99.
+For example, "Gnn" for GPS satellites, "Rnn" for GLONASS satellites, "Lnn"
+for Low-Earth Orbiting (LEO) satellites, “Snn” for Satellite-Based
+Augmentation System (SBAS) satellites, "Enn" for Galileo satellites, "Cnn"
+for BeiDou Navigation Satellite System (BDS) satellites, “Inn” for the
+Indian Regional Navigation Satellite System (IRNSS) satellites, and "Jnn"
+for the Japanese Quasi-Zenith Satellite System (QZSS) satellites. For QZSS
+the nn=PRN-192 rule is applied, for example QZS-1 (PRN=193) is expressed by
+"J01". Other letters will be allowed for other types of satellites. Lower
+numbered satellites must always have a preceding zero (e.g., "G09" not
+"G 9"). The letter, which represents the Satellite System Indicator, must
+always be present (i.e.," 09" is no longer a valid satellite identifier).
+This is a significant change from SP3-a and needs to be noted when software
+is updated to read the new SP3-c or SP3-d format. A list of identifiers
+created for LEO satellites can be viewed at
+http://cddis.gsfc.nasa.gov/sp3c_satlist.html . A list of identifiers for the
+SBAS satellites can be viewed at: http://igs.org/mgex/status-SBAS .
+The twelfth to the twentieth lines hold the orbit accuracy exponents.
+The value 0 is interpreted as accuracy unknown. A satellite's accuracy
+exponent appears in the same columns within these lines as the identifier on
+the satellite ID lines. The accuracy is computed from the exponent as in
+the following example. If the accuracy exponent is 13, the accuracy is
+2**13 mm or ~ 8 m. The quoted orbital error should represent one standard
+deviation and be based on the orbital error in the entire file for the
+respective satellite. This may lead to some distortion when orbit files are
+joined together, or when a file contains both observed and predicted data.
+
+
+On the twenty-first line, columns 4-5 hold the File Type descriptor.
+This is a single character left-justified in the two-character field. The
+currently defined values are: "G " for GPS only files, "M " for mixed files,
+"R " for GLONASS only files, "L " for LEO only files, “S “ for SBAS only
+files, “I “ for IRNSS only files, "E " for Galileo only files, "C " for
+BeiDou only files, and "J " for QZSS only files. No default values are
+implied; either "G ", "M ", "R ", "L ", “S “, “I “, "E ", "C ", or "J " is
+required. On this same line, columns 10-12 hold the Time System Indicator.
+In order to remove any ambiguity with respect to which time system is being
+used in mixed files, this field specifies the time system used in each SP3-d
+file: use "GPS" to identify GPS Time, "GLO" to identify the GLONASS UTC time
+system, "GAL" to identify Galileo system time, “BDT” to identify BeiDou
+system time, "TAI" to identify International Atomic Time, "UTC" to identify
+Coordinated Universal Time, “IRN” to identify IRNSS Time, or "QZS" to
+identify QZSS Time. No default value is implied; either "GPS", "GLO",
+"GAL", “BDT”, "TAI”, "UTC", “IRN”, or "QZS" must be specified.
+On Line twenty-three, columns 4-13 would hold the floating-point base
+number used for computing the standard deviations for the components of the
+satellite position and velocity. Instead of using 2**nn as is done in the
+orbit accuracy lines 12-20 in the header, better resolution can be attained
+
+using a number like 1.25**nn. The units for position and velocity are mm and
+10**-4 mm/sec, respectively. Likewise, columns 15-26 would hold the
+floating-point base number for computing the standard deviations for the
+clock correction and the rate-of-change of the clock correction. Again,
+instead of using 2**nnn, one might use a number like 1.025**nnn (see also
+Example 2). The units for the clock correction and the rate-of-change of the
+clock correction are picosec and 10**-4 picosec/sec, respectively.
+Lines 21-26 (the six lines that begin with the character “%”) have been
+designed so that additional parameters may be added to the SP3 format.
+Lines 27-31 in Example 1 are free form comments (comments go in columns
+4-80). For backwards compatibility, there will always be at least 4 comment
+lines. These can be filled with “/* CCCCC…CCC” or with “/* “. The comment
+lines should be read in until the first Epoch Header Record (i.e. the first
+time tag line) is encountered.
+Line 32 is the first Epoch Header Record, showing the epoch date/time.
+
+
+Line 33 is the first Position and Clock Record; the first character is
+always 'P'. The positional values are in kilometers and are precise to 1
+mm. A precision of 0.5 mm can be accommodated if rounding is used, i.e.,
+the value shown is never more than 0.5 mm from the computed value. The
+clock values are in microseconds and are precise to 1 picosecond. Bad or
+absent positional values are to be set to 0.000000. Bad or absent clock
+values are to be set to _999999.999999. The six integer nines are required,
+whereas the fractional part nines are optional.
+On Line 24 in Example 2, Columns 62-69 hold the two digit exponents which
+represent the standard deviations of the satellite coordinates in units of
+millimeters. For example, if the base floating point number from line
+fifteen is 1.25, and the two-digit exponent for the X-coordinate is 18, then
+the standard deviation of the X-coordinate is 1.25**18 = 55.5112 or
+approximately 56 mm. In a similar manner, columns 71-73 hold a three-digit
+exponent representing the standard deviation for the clock correction in
+units of picoseconds. As an example, if the base floating point number from
+line fifteen is 1.025, and the three-digit exponent for the clock correction
+is 219, then the standard deviation of the clock correction is 1.025**219 =
+223.1138 or approximately 223 picoseconds. An exponent value of 99 or 999
+would mean that a standard deviation was too large to represent. If a
+standard deviation is unknown, its field is left blank. Column 75 is the
+Clock Event Flag (either 'E' or blank). An 'E' flag is used to denote a
+discontinuity in the satellite clock correction (this might be caused by a
+clock swap on the satellite). The discontinuity is understood to have
+occurred sometime between the previous epoch and current epoch, or at the
+current epoch. A blank means either no event occurred, or it is unknown
+whether any event occurred. Column 76 is the Clock Correction Prediction
+Flag (either 'P' or blank). A 'P' flag indicates that the satellite clock
+correction at this epoch is predicted. A blank means that the clock
+correction is observed.
+Column 79 is the orbit Maneuver Flag (either 'M'
+or blank). An 'M' flag indicates that sometime between the previous epoch
+and the current epoch, or at the current epoch, an orbit maneuver took place
+for this satellite. As an example, if a certain maneuver lasted 50 minutes
+(a satellite changing orbital planes) then these M-flags could conceivably
+appear at five separate 15-minute orbit epochs. If the maneuver started at
+11h 14m and lasted to 12h 04m, M-flags would appear for the epochs 11:15,
+11:30, 11:45, 12:00 and 12:15. A maneuver is loosely defined as any planned
+or humanly-detectable thruster firing that changes the orbit of a satellite.
+A blank means either no maneuver occurred, or it is unknown whether any
+maneuver occurred. Column 80 is the Orbit Prediction Flag (either 'P' or
+blank). A 'P' flag indicates that the satellite position at this epoch is
+predicted. A blank means that the satellite position is observed. Since
+not all of the fields in columns 61 through 80 will be used at every epoch,
+not every Position and Clock Record will be required to contain 80 columns;
+
+missing columns should be interpreted as blanks. Any program reading an
+SP3-d file must be prepared to deal with short records (either by padding
+with blanks, or by some other method).
+Line 25 (in example 2) is the optional Position and Clock Correlation
+Record. This record type always begins with the characters 'EP'. Columns
+5-18 give the standard deviations for the X,Y,Z satellite coordinates in
+units of mm. The standard deviations in this record are given to greater
+resolution than the approximate values given in the Position and Clock
+Record. A value of 9999 would mean that a standard deviation was too large
+to be represented. If a standard deviation is unknown, its field is left
+blank. Columns 20-26 give the standard deviation of the clock correction in
+units of picoseconds. A value of 9999999 would mean that the standard
+deviation was too large to be represented. Columns 28-80 are used to store
+the correlation coefficients for xy, xz, xc, yz, yc, and zc. Each 8-digit
+integer would be divided by 10,000,000 to produce a correlation coefficient
+between -0.9999999 and +0.9999999. If some of the correlation coefficients
+are omitted, a Position and Clock Correlation Record may contain less than
+80 columns.
+
+
+Line 26 (in example 2) is the optional Velocity and Clock Rate-ofChange Record. This type of record always begins with the character 'V'.
+When the position/velocity mode flag is set to 'V' in line one, then each
+Position and Clock Record for a satellite will be followed by a
+corresponding Velocity and Clock Rate-of-Change Record (although in some
+cases there may be a Position and Clock Correlation Record in between the
+two). The satellite velocity components are given in columns 5-46 in units
+of decimeters/second and have a precision of 10**-4 millimeters/second.
+Columns 47-60 give the rate-of-change of the clock correction in units of
+10**-4 microseconds/second. The precision of this parameter is 10**-16
+seconds/second. Bad or absent velocity values are to be set to 0.000000.
+Bad or absent clock rate-of-change values are to be set to _999999.999999.
+The six integer nines are required, whereas the fractional part nines are
+optional. In a manner similar to the Position and Clock Record, columns 6269 hold two-digit exponents for representing the standard deviation of the
+X-, Y-, Z-velocities (e.g., 1.25**14 = 22.7374 or approximately 0.0022
+mm/sec). Columns 71-73 hold a three-digit exponent for representing the
+standard deviation of the clock correction rate-of-change (e.g., 1.025**191
+= 111.7528 or approximately 0.0112 psec/sec). A value of 99 or 999 would
+mean that a standard deviation was too large to represent. If a standard
+deviation is unknown, its field is left blank. If one or more fields in
+columns 61 through 73 are omitted, a Velocity and Clock Rate-of-Change
+Record may contain less than 73 columns.
+Line 27 (in example 2) is the optional Velocity and Clock Rate-ofChange Correlation Record. This type of line always begins with the
+characters 'EV'. Columns 5-18 give the standard deviations for the X-, Y-,
+Z-velocities in units of 10**-4 millimeters/second. The standard deviations
+of the velocity components are given to greater resolution than the
+approximate values given in the Velocity and Clock Rate-of-Change Record. A
+value of 9999 would mean that a velocity standard deviation was too large to
+be represented. Columns 20-26 give the standard deviation of the clock
+correction rate-of-change in units of 10**-4 psec/sec. A value of 9999999
+would mean that the clock correction rate-of-change was too large to be
+represented. If a standard deviation is unknown, its field is left blank.
+Columns 28-80 are used to store the correlation coefficients between the
+velocity components and the clock correction rate-of-change (xy, xz, xc, yz,
+yc, and zc). Each 8-digit integer would be divided by 10,000,000 to produce
+a correlation coefficient between -0.9999999 and +0.9999999. If some of the
+correlation coefficients are omitted, a Velocity and Clock Rate-of-Change
+Correlation Record may contain less than 80 columns.
+
+FINAL NOTE: Any software which reads SP3-d files must be prepared to read
+the 'EP' and 'EV' correlation records if they are present. If the person or
+agency reading the file decides that the correlation information (and the
+more accurate standard deviations) are not needed, then these 'EP' and 'EV'
+records might be simply ignored and skipped over. There may be only a few EP
+and/or EV records placed in an SP3-d file, i.e., it is not necessary to have
+EP and/or EV records for every satellite at every epoch. The only rule is:
+since no satellite IDs are given in the optional EP and EV records, they
+must immediately follow their corresponding P or V record for that
+satellite. The satellite order of the P, EP, V, and EV records (or subset of
+these) must be the same as the order of the satellite ID records (those
+beginning with “+ “) in the header. Thus the order and the total number of
+satellites at each epoch must always be the same. This serves as an
+integrity check on the file -- i.e., satellites must be designated as "bad"
+or "absent" by intentionally setting their position (and velocity) values
+equal to zero. There should never be any satellite's Position or Velocity
+records left out at an epoch. Since not all SP3-d records will contain their
+maximum number of columns, missing columns should be interpreted as blanks.
+Any program reading an SP3-d file must be prepared to deal with short
+records (either by padding with blanks, or by some other method).
+ACKNOWLEDGMENTS
+The idea for using floating-point base numbers (1.25**nn and 1.025**nnn,
+rather than 2**nn) to improve the resolution of the standard deviations was
+suggested by Benjamin Remondi. Most of the extensions added to the later
+versions of the SP3 format have been relatively minor; it is a testament to
+Dr. Remondi’s foresight and ingenuity that the SP3 format has been used now
+for over twenty years. The author would also like to thank the several
+members of the IGS community who offered comments and suggestions on the
+design of the SP3-c and SP3-d formats so far: Henno Boomkamp, Kevin Choi,
+Oscar Colombo, Rolf Dach, Gerd Gendt, Jake Griffiths, Werner Gurtner, Urs
+Hugentobler, Jan Kouba, Sylvain Loyer, Stephen Malys, Oliver Montenbruck,
+Tomas Martin Mur, Jim Ray, Ignacio Romero, Markus Rothacher, Mark
+Schenewerk, Victor Slabinski, Tim Springer, Everett Swift, and Robert Weber.
+
+REFERENCES
+1. Remondi, B. W. 1985: Distribution of Global Positioning System
+Ephemerides by the National Geodetic Survey, Presented at the First
+Conference on Civil Applications of GPS - Institute of Navigation, September
+12, 1985, 8 pp.
+2. Remondi, B. W. 1989: Extending the National Geodetic Survey Geodetic
+Orbit Formats, NOAA Technical Report 133 NGS 46, 85 pp.
+3. Remondi, B. W., 1991: NGS Second Generation ASCII and Binary Orbit
+Formats and Associated Interpolated Studies, Proceedings of the Twentieth
+General Assembly, International Union of Geodesy and Geophysics, Vienna,
+Austria, August 11-24, 1991, 28 pp.
+
+
+4. Gurtner, W., 2000: RINEX: The Receiver-Independent Exchange Format, GPS
+World, Volume 5, Number 7, 48-52. Also available from:
+ftp://igscb.jpl.nasa.gov/igscb/data/format/rinex210.txt
+5. Hilla, S., 2002: Extending the Standard Product 3 (SP3) Orbit Format,
+Proceedings of the International GPS Service Network, Data, and Analysis
+Center Workshop, Ottawa, Canada, April 8-11, 2002.
+
+6. Spofford, P. R. and Remondi, B. W., 1994: The National Geodetic Survey
+Standard GPS Format SP3. (SP3-a format) available from the IGS website:
+http://igscb.jpl.nasa.gov/igscb/data/format/sp3_docu.txt
+7. The NIMA SP3 format can be viewed at
+http://earth-info.nga.mil/GandG/sathtml/sp3format.html
+8. The IGEX98 SP3-b format [IGEX Mail-0042, SP3 Modifications (corrigenda)]
+can be viewed at
+http://igscb.jpl.nasa.gov/mail/igexmail/1998/msg00041.html
+9. A list of identifiers for Low-Earth Orbiting satellites can be viewed at
+http://cddis.gsfc.nasa.gov/sp3c_satlist.html
+10. A list of identifiers for Satellite Based Augmentation System (SBAS)
+satellites can be viewed at
+http://igs.org/mgex/status-SBAS
+11. Hilla, S., 2010: ORBEX: The Orbit Exchange Format, Draft Version 0.08,
+dated 7 May 2010. Available from ftp://ftp.ngs.noaa.gov/pub/ORBEX
+See also IGS-ACS Mail, 07 May 2010, Message Number 369 (access may be
+limited to the IGS Analysis Center members only).
+12. Montenbruck, O., 2013, Personal communication.
+13. Montenbruck, O., C. Rizos, R. Weber, G. Weber, R. Neilan, and U.
+Hugentobler, Getting a Grip on Multi-GNSS – The International GNSS Service
+MGEX Campaign, pp 44-49, GPS World, July 2013.
+
+APPENDIX A – The History of the SP3 Format
+The original Standard Product 3 format (SP3-a) was first proposed by
+Benjamin Remondi in (Remondi, 1989) and modified and adopted in (Remondi,
+1991). The SP3 format is similar to the original NGS Standard Product 1
+format described in (Remondi, 1989 and 1985) but includes additional
+information: satellite clock corrections, orbit accuracy exponents, comment
+lines, the GPS week and seconds of week associated with the first epoch, and
+a more flexible header structure (Spofford and Remondi, 1994).
+
+
+
+In 1998, W. Gurtner and M. Rothacher defined an SP3-b format to allow for
+the combination of GPS orbits and GLONASS orbits (see IGEX Mail 0042, 27Oct-1998). All of these SP3-b modifications were backwards compatible with
+SP3-a, with the exception of the satellite identification labels – which
+were changed from an I3 field to an A1,I2 field to accommodate both GPS and
+GLONASS identifiers in a manner similar to RINEX files (Gurtner, 2000).
+At the 2000 International GPS Service (IGS) Analysis Center Workshop held at
+the U.S. Naval Observatory, it was suggested to modify the SP3 format still
+further so that orbit files distributed by the IGS could include some type
+of clock accuracy information, and so that separate accuracy information
+would be available for the observed versus predicted parts of the IGS ultrarapid orbit files. Rather than just putting two sets of accuracy exponents
+in the header (one for the observed part and one for the predicted part) it
+was decided instead to put accuracy information at each epoch (for X, Y, Z,
+and satellite clock correction). Since the original SP3-a and SP3-b formats
+were only 60 columns wide, this additional information was easily added
+using columns 61 through 80 in each Position and Clock Record. This was
+done in such a way as to remain mostly backwards compatible with SP3-a. As
+
+comments were collected from the IGS (orbit) Analysis Centers, additional
+ideas emerged. It was suggested that a clock event flag be added in column
+75 (as currently done by some groups) to denote events like a clock swap on
+a satellite. It was also suggested to add an orbit event flag, to denote
+cases where it was known that a satellite went through some type of orbit
+maneuver. It was also suggested that clock prediction and orbit prediction
+flags be added. Finally, for the purposes of computing user range errors
+more accurately for each satellite, it was suggested to add correlation
+information between the satellite coordinates and the satellite clock
+correction. These ideas were discussed further at the 2002 IGS Network,
+Data, and Analysis Center Workshop held in Ottawa (Hilla, 2002).
+All of these suggestions were incorporated in the SP3-c format. As a result,
+there can now be as many as three different sets of satellite position
+accuracy indicators in any SP3-c or SP3-d file. The first set, the original
+accuracy exponents in the header, have been kept in SP3-d to maintain
+backwards compatibility with the SP3-a format and with existing GPS
+processing software. These exponents are interpreted as 2**nn millimeters.
+A zero exponent means the accuracy is unknown. The quoted orbit error should
+represent one standard deviation and be based on the orbital error in the
+entire file for the respective satellite. The second set, in columns 62
+through 69 of the Position and Clock Record, represent the standard
+deviation of each position component (X, Y, and Z) at that epoch, in
+millimeters. These are also exponents but use a floating-point base (for
+example, 1.25**nn) to achieve better resolution for the standard deviations.
+A zero exponent here represents a 1 millimeter standard deviation. Blank
+spaces mean the standard deviation is unknown. These first two sets of
+standard deviations are currently present in all IGS-produced SP3-c files.
+
+
+A third set of standard deviations can be found in the optional Position and
+Clock Correlation Record (the EP record). This optional record was added to
+provide high precision users with the correlation coefficients between the
+X, Y, Z, and satellite clock correction values. In order to be able to
+construct the full 4-by-4 covariance matrix for a satellite at an epoch,
+without any loss of precision, the standard deviations for the X, Y, and Z
+position components are given here to full millimeter precision using a
+range of 1 to 9999 millimeters. Blank spaces mean a standard deviation or a
+correlation coefficient is unknown (blanks would probably only occur for the
+clock information, unless the EP records were being used to store only
+standard deviations, or only correlation coefficients).
+In this document the format fields for the SP3-d format are defined. These
+include all of the changes made for SP3-c. The fields that are defined as
+"blanks" are reserved fields which must remain blank. All times referred to
+in an SP3-d file are in the SAME time system, even when they are represented
+as Gregorian Dates or Modified Julian Dates. In SP3-d, the Time System code
+for the entire file (GPS, GLO, GAL, BDT, TAI, QZS, or UTC) is now specified
+in the header on line thirteen. The information to convert between GPS Time
+and Coordinated Universal Time (i.e., the leap seconds and the fractional
+error in GPS Time) is not provided as part of the SP3 format. The basic
+format of an SP3 file is a Header, followed by a series of epoch times each
+with a set of Position and Clock Records listed for each satellite. A
+second, optional record contains satellite velocities and the clock
+correction rate-of-change. The Position Record Flag, P, in line one, column
+3, indicates that no velocities are included. A Velocity Record Flag, V, in
+line one indicates that at each epoch, for each satellite, an additional
+satellite velocity and clock rate-of-change has been computed. SP3-c added
+two more optional records: a Position and Clock Correlation Record (EP
+record), and a Velocity and Clock Rate-of-Change Correlation Record (EV
+record).
+
+APPENDIX B - Modification History of the SP3-c and SP3-d Formats
+Note: The original SP3-c format document was dated 5 September 2002.
+Note: The IGS began using the SP3-c format for Rapid and Ultra Rapid
+Products from GPS week 1285.1, and for Final Products from week 1283. See
+IGSMAIL-5000 sent by Gerd Gendt on 27 August 2004. The new files had the
+extension “.sp3c”. For a time, both the SP3-a and the SP3-c files were made
+available.
+Note: Beginning on 29 January 2006, the IGS made their precise ephemeris
+files available only in the new SP3-c format.
+Note: On 27 September 2006, the sp3c.txt file was updated slightly to add
+more options for the Time System Indicator. The original version had only
+"GPS" and "UTC" as options for the Time System Indicator. This new version
+adds codes "GLO", "GAL", and "TAI". Also, clarifications were made
+regarding the EP and EV records, and the order of the satellites and records
+at each epoch.
+Note: On 12 February 2007, the sp3c.txt file was modified to include a
+reference to a new list of LEO satellites available at CDDIS (see the
+documentation below regarding the satellite identifiers found in the third
+through seventh lines).
+Note: On 17 August 2010, the sp3c.txt file was modified to add satellite
+system identifiers for J = QZSS and C = COMPASS, and to add "QZS" as a Time
+System indicator for QZSS Time.
+Note: On 8 August 2013, the first draft version of SP3-d was written. This
+version increases the maximum number of satellites from 85 to 999, allows
+for unlimited comment records, and increases the length of the comment
+records from 60 characters to 80 characters. Additional Satellite ID
+letters were added for Satellite-Based Augmentation System (SBAS)
+satellites, and for the Indian Regional Navigation Satellite System (IRNSS)
+satellites: “S” and “I”, respectively.
+Note: On 17 September 2013, BeiDou system time (BDT) was added and all
+references to “COMPASS” were deleted.
+Note: On 15 January 2016, IRNSS system time (IRN) was added, several URL
+links were updated, and a few clarifying statements were added. [This third
+draft version of SP3-d was then sent to the IGS Analysis Centers for
+comments].
+
+
+Note: On 21 February 2016, following the adoption of SP3-d by the Multi-GNSS
+Working Group at the 2016 IGS Workshop in Sydney, Australia, minor
+grammatical corrections were made, and the word DRAFT was removed from the
+title.
